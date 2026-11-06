@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Terms: {{ title }}{% endblock %}
+{% block main %}
+<main class="wrap">
+  <article class="doc">
+    <h1>Terms and no-warranty notice</h1>
+    <p><strong>{{ notice }}</strong> <strong>{{ disclaimer }}</strong></p>
+
+    <h2>What this service is</h2>
+    <p>{{ title }} is a free, unofficial mirror of the list of airworthiness directives (ADs) and related publications that the European Union Aviation Safety Agency (EASA) publishes on its website: the <a href="{{ interim_url }}">Safety Publications interim page</a>, the <a href="{{ archive_url }}">AD archive page</a> and the CSV lists it publishes every two weeks. It turns that list into JSON and Atom feeds. It is not affiliated with or endorsed by EASA.</p>
+
+    <h2>Not for compliance use</h2>
+    <p>Do not use this service as a source for airworthiness compliance, to plan maintenance, or to decide whether an AD applies to an aircraft, engine, propeller or part. Confirm every AD, its applicability, its status and its revision against the official EASA document, which is the only authoritative source. This service gives no applicability verdicts and does no serial number or part number matching.</p>
+
+    <h2>No warranty</h2>
+    <p>The service is provided "as is", free of charge, without any warranty. The data may be incomplete, wrong or late. Parsing fails sometimes, and if EASA changes the layout of its pages, updates here stop until the parser is fixed. A status shown here, such as "active" or "superseded", reflects only the signals in EASA's published list and PDF headers, and it may be wrong. To the extent the law permits, the operator accepts no liability for any loss or damage from using this service.</p>
+
+    <h2>Freshness</h2>
+    <p>Each JSON response shows the time of the last successful sync of the interim page; <code>/v1/status</code> shows it for each source. When that sync is older than {{ stale_hours | round(1) | replace(".0", "") }} hours, every JSON response says so with <code>stale: true</code> and a warning, the Atom feeds carry the warning, and this site shows a banner.</p>
+
+    <h2>Official documents</h2>
+    <p>Every record links to the EASA page that lists it, and to the official EASA document where EASA lists one. This service does not keep, cache publicly or serve EASA's PDF files: it reads each PDF once in a temporary file and deletes it. It keeps the extracted text privately for parsing and never serves it. From each PDF header it publishes only the dates, the supersedure and revision references, the foreign AD reference and the start of the applicability text (at most 300 characters). Data source: EASA. EASA's <a href="{{ copyright_url }}">copyright notice</a> applies to EASA's content.</p>
+
+    <h2>Corrections and removal</h2>
+    <p>To report an error, or to ask for a record to be corrected or removed, open an issue at <a href="{{ repo_url }}">{{ repo_url }}</a>. On a reasonable request from EASA, the operator removes the records concerned or takes the whole service offline.</p>
+
+    <h2>Availability</h2>
+    <p>The service is free and may change or stop at any time, without notice. There is no support commitment.</p>
+
+    <h2>EASA's own free services</h2>
+    <p>EASA offers free email alerts for new safety publications and runs its own <a href="{{ tool_url }}">Safety Publications Tool</a> (offline when this service was built in November 2026). See the <a href="{{ faq_url }}">EASA FAQ on the Safety Publications Tool</a> and the <a href="{{ interim_url }}#group-get-notified">email alert section of the interim page</a>.</p>
+
+    <a class="back" href="/">Back to {{ title }}</a>
+  </article>
+</main>
+{% endblock %}

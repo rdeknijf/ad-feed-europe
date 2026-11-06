@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "src/easa_ad_api/templates/base.html"
+        ],
+        "createdAt": "2026-11-04T20:06:31.697Z",
+        "reason": "agent: .mirror-strip's child .wrap has padding 0 var(--gutter) = clamp(16px,4vw,48px); 390px render shows 16px text inset; detector reads the full-bleed strip, not the inset wrap"
+      }
+    ]
+  }
+}

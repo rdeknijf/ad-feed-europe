@@ -1,0 +1,16 @@
+                                                                                                                              EASA AD No.: 2026-0213
+
+                                                                  Airworthiness Directive
+                                                                  AD No.:              2026-0213
+                                                                  Issued:              04 November 2026
+
+         Design Approval Holder’s Name:                                                    Type/Model designation(s):
+         Airbus Canada Limited Partnership                                                 BD-500 aeroplanes
+
+         Effective Date:                 18 November 2026
+         Foreign AD:                     Transport Canda Civil Aviation (TCCA) AD CF-2026-16
+         Supersedure:                    None
+
+         Applicability:
+         ACLP BD-500-1A10 aeroplanes, serial numbers (s/n) 50001 through 50088 (inclusive), and
+         BD-500-1A11 aeroplanes, s/n 55001 through 55476 (inclusive).

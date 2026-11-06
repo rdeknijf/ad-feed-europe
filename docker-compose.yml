@@ -1,0 +1,42 @@
+services:
+  api:
+    build: .
+    container_name: easa-ad-api
+    restart: unless-stopped
+    environment:
+      - EASA_AD_DATA_DIR=/data
+      - EASA_AD_STALE_HOURS=6
+    volumes:
+      - ./data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.easa-ad-api.rule=Host(`adfeed.deknijf.com`)"
+      - "traefik.http.routers.easa-ad-api.entrypoints=websecure"
+      - "traefik.http.routers.easa-ad-api.tls.certresolver=myresolver"
+      - "traefik.http.routers.easa-ad-api.middlewares=easa-ad-api-ratelimit"
+      - "traefik.http.middlewares.easa-ad-api-ratelimit.ratelimit.average=10"
+      - "traefik.http.middlewares.easa-ad-api-ratelimit.ratelimit.burst=40"
+      - "traefik.http.middlewares.easa-ad-api-ratelimit.ratelimit.sourcecriterion.requestheadername=CF-Connecting-IP"
+      - "traefik.http.services.easa-ad-api.loadbalancer.server.port=8000"
+      - "traefik.docker.network=proxy"
+    networks:
+      - proxy
+
+  # Polls EASA: interim page every 30 minutes (plus new EASA AD PDFs), archive weekly,
+  # each new biweekly CSV once.
+  worker:
+    build: .
+    container_name: easa-ad-worker
+    restart: unless-stopped
+    command: [".venv/bin/easa-ad-api", "worker"]
+    environment:
+      - EASA_AD_DATA_DIR=/data
+      - EASA_AD_REQUEST_DELAY=2.5
+    volumes:
+      - ./data:/data
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

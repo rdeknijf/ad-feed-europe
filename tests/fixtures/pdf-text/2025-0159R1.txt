@@ -1,0 +1,19 @@
+                                                                                                                          EASA AD No.: 2025-0159R1
+
+                                                                  Airworthiness Directive
+                                                                  AD No.: 2025-0159R1
+                                                                  Issued:          19 October 2026
+
+         Design Approval Holder’s Name:                                                    Type/Model designation(s):
+         AIRBUS HELICOPTERS                                                                AS 350, AS 355, EC 120 and EC 130
+                                                                                           helicopters
+
+         Effective Date:                 Revision 01: 26 October 2026
+         Foreign AD:                     Not applicable
+         Revison:                        This AD revises EASA AD 2025-0159 dated 24 July 2025.
+
+         Applicability:
+         AS 350 B, AS 350 BA, AS 350 BB, AS 350 B1, AS 350 B2, AS 350 B3, AS 350 D, EC 120 B, EC 130 B4, AS
+         355 E, AS 355 F, AS 355 F1, AS 355 F2, AS 355 N and AS 355 NP helicopters, all serial numbers (s/n)
+         on which modification 0720257 has not been embodied, except EC 120 B helicopters having s/n
+         1674 and a s/n from 1678 until 1700 inclusive.

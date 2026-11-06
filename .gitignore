@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+# Local database, raw source pages and the private PDF text store: never committed.
+data/
+.impeccable/review/
+.playwright-mcp/
+.impeccable/hook.cache.json

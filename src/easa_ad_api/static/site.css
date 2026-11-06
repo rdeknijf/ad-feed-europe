@@ -1,0 +1,300 @@
+/* Hangar floor and aircraft placards: epoxy-grey ground, safety-yellow floor lines that
+   bound each bay, black placard ink, and one red reserved for the "not a compliance
+   source" streamer and for stale-data warnings. */
+
+@font-face {
+  font-family: "Barlow Condensed";
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/barlow-condensed-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Barlow Condensed";
+  font-weight: 800;
+  font-display: swap;
+  src: url("fonts/barlow-condensed-latin-800-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Barlow";
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/barlow-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Barlow";
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/barlow-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");
+}
+
+:root {
+  --floor: #d6d8d9;
+  --floor-deep: #c4c7c9;
+  --placard: #f4f5f5;
+  --ink: #141617;
+  --ink-soft: #3a3f42;
+  --line: #f2bd00;
+  --line-ink: #1c1a10;
+  --tag: #b3121f;
+  --tag-ink: #ffffff;
+  --ok: #1d5e3a;
+  --code-bg: #1b1e20;
+  --code-ink: #e9ecec;
+  --code-key: #f2bd00;
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gutter: clamp(16px, 4vw, 48px);
+  --bay: 1180px;
+  --rule: 2px solid var(--ink);
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--floor); color: var(--ink); }
+
+body {
+  margin: 0;
+  font: 400 1.0625rem/1.55 var(--body);
+  background: var(--floor);
+  font-variant-numeric: tabular-nums;
+}
+
+::selection { background: var(--line); color: var(--line-ink); }
+
+a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: 0.18em; }
+a:hover { text-decoration-thickness: 3px; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+footer :focus-visible, .req :focus-visible, .mirror-strip :focus-visible, pre:focus-visible { outline-color: var(--line); }
+code { font: 400 0.9em/1 var(--mono); }
+
+.wrap { max-width: var(--bay); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* Unofficial strip: always first, always black. */
+.mirror-strip {
+  background: var(--ink);
+  color: var(--placard);
+  font: 600 0.95rem/1.4 var(--body);
+  padding: 10px 0;
+}
+.mirror-strip strong { color: var(--line); font-family: var(--display); font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; margin-right: 0.5em; }
+
+/* Stale placard: hazard stripes, never colour alone. */
+.stale {
+  background: repeating-linear-gradient(-45deg, var(--line) 0 18px, var(--ink) 18px 36px);
+  padding: 10px 0;
+}
+.stale .wrap > div {
+  background: var(--placard);
+  border: var(--rule);
+  padding: 12px 16px;
+  font-weight: 600;
+}
+.stale b { font-family: var(--display); font-weight: 800; font-size: 1.25rem; letter-spacing: 0.03em; color: var(--tag); text-transform: uppercase; margin-right: 0.4em; }
+
+/* Masthead */
+.mast { padding: clamp(28px, 5vw, 56px) 0 0; position: relative; }
+.mast-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.title {
+  font: 800 clamp(3.4rem, 9vw, 6rem)/0.9 var(--display);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0 0 18px;
+  text-wrap: balance;
+}
+.title span { display: block; font-size: 0.42em; letter-spacing: 0.02em; color: var(--ink-soft); margin-top: 0.35em; }
+.hook { font-size: clamp(1.15rem, 2vw, 1.35rem); line-height: 1.45; max-width: 36ch; margin: 0 0 24px; }
+
+/* The streamer: a red tag hanging from the masthead. */
+.streamer {
+  display: inline-flex;
+  align-items: stretch;
+  margin: 4px 0 28px;
+  max-width: 100%;
+}
+.streamer p {
+  margin: 0;
+  background: var(--tag);
+  color: var(--tag-ink);
+  padding: 12px 20px 12px 18px;
+  font: 800 clamp(1rem, 2.4vw, 1.3rem)/1.15 var(--display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 50%, 100% 100%, 0 100%);
+  padding-right: 34px;
+}
+.streamer small { display: block; font: 600 0.9rem/1.35 var(--body); letter-spacing: 0; text-transform: none; margin-top: 4px; }
+
+/* Query form: the page's working action. */
+.query { background: var(--placard); border: var(--rule); padding: 18px; max-width: 560px; }
+.query label { display: block; font: 800 1rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+.query .row { display: flex; gap: 0; }
+.query input {
+  flex: 1;
+  min-width: 0;
+  font: 400 1.15rem/1 var(--mono);
+  padding: 12px 14px;
+  border: var(--rule);
+  border-right: 0;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 0;
+}
+.query button {
+  font: 800 1.15rem/1 var(--display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  background: var(--line);
+  color: var(--line-ink);
+  border: var(--rule);
+  cursor: pointer;
+  border-radius: 0;
+}
+.query button:hover { background: var(--ink); color: var(--line); }
+.query .hint { margin: 10px 0 0; font-size: 0.92rem; color: var(--ink-soft); }
+
+/* Sync placard */
+.placard {
+  background: var(--placard);
+  border: var(--rule);
+}
+.side { display: grid; gap: 16px; }
+.call-label { font: 800 0.9rem/1 var(--display); letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 8px; }
+.placard h2 {
+  margin: 0;
+  background: var(--ink);
+  color: var(--placard);
+  font: 800 1.05rem/1 var(--display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.placard h2 .lamp { display: inline-flex; align-items: center; gap: 8px; color: var(--line); }
+.placard h2 .lamp::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #3cc46d; }
+.placard.is-stale h2 .lamp { color: #ff8a8a; }
+.placard.is-stale h2 .lamp::before { background: var(--tag); box-shadow: 0 0 0 3px #ffd0d0; }
+.placard dl { margin: 0; padding: 6px 16px 14px; display: grid; grid-template-columns: auto 1fr; column-gap: 16px; }
+.placard dt, .placard dd { padding: 9px 0; border-bottom: 1px solid var(--floor-deep); margin: 0; }
+.placard dt { font: 800 1rem/1.3 var(--display); letter-spacing: 0.06em; text-transform: uppercase; }
+.placard dd { font: 400 0.9rem/1.35 var(--mono); overflow-wrap: anywhere; }
+.placard dd em { font-style: normal; color: var(--tag); font-family: var(--body); font-weight: 600; }
+.placard p { margin: 0; padding: 0 16px 14px; font-size: 0.92rem; color: var(--ink-soft); }
+
+/* Floor line: the yellow band that bounds each bay. */
+.floorline {
+  height: 14px;
+  background: var(--line);
+  margin: clamp(40px, 6vw, 72px) 0 0;
+  box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.12);
+}
+.bay { padding: clamp(32px, 5vw, 56px) 0; }
+.bay h2 {
+  font: 800 clamp(2rem, 4.5vw, 3rem)/1 var(--display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+.bay > .wrap > p, .lede { max-width: 68ch; margin: 0 0 22px; }
+
+/* Example: request call-out next to the ruled result table. */
+.req {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+  background: var(--code-bg);
+  color: var(--code-ink);
+  font: 400 0.95rem/1.5 var(--mono);
+  padding: 14px 16px;
+  border: var(--rule);
+  overflow-x: auto;
+}
+.req .verb { color: var(--code-key); }
+.req a { color: var(--code-ink); overflow-wrap: anywhere; min-width: 0; }
+table.ads { width: 100%; border-collapse: collapse; background: var(--placard); border: var(--rule); border-top: 0; font-size: 0.95rem; }
+table.ads th {
+  text-align: left;
+  font: 800 0.9rem/1.2 var(--display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--floor-deep);
+  padding: 10px 12px;
+  border-bottom: var(--rule);
+  position: sticky;
+  top: 0;
+}
+table.ads td { padding: 11px 12px; border-bottom: 1px solid var(--floor-deep); vertical-align: top; }
+table.ads td.num { font-family: var(--mono); font-size: 0.9rem; white-space: nowrap; }
+table.ads td.date { font-family: var(--mono); font-size: 0.85rem; white-space: nowrap; }
+.badge { display: inline-block; font: 800 0.78rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 6px; border: 2px solid var(--ink); margin-left: 6px; vertical-align: 1px; }
+.badge.emergency { background: var(--tag); border-color: var(--tag); color: #fff; }
+.status { font: 600 0.85rem/1.2 var(--body); }
+.status.superseded, .status.revised, .status.cancelled, .status.withdrawn, .status.not_adopted { color: var(--ink-soft); text-decoration: line-through; text-decoration-thickness: 1px; }
+.empty { background: var(--placard); border: var(--rule); border-top: 0; padding: 18px; }
+.bay > .wrap > p.more { max-width: none; margin: 18px 0 0; font-size: 0.95rem; }
+.more a { overflow-wrap: anywhere; }
+table.ads td.official { white-space: nowrap; }
+.dates-narrow { display: none; font: 400 0.8rem/1.4 var(--mono); color: var(--ink-soft); margin-top: 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Endpoint placards */
+.endpoints { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 0; border: var(--rule); background: var(--placard); }
+.endpoints > div { padding: 16px 18px; border-bottom: 1px solid var(--floor-deep); border-right: 1px solid var(--floor-deep); }
+.endpoints code { display: block; font: 400 0.95rem/1.4 var(--mono); margin-bottom: 6px; overflow-wrap: anywhere; }
+.endpoints code b { font-weight: 700; color: var(--ink-soft); margin-right: 0.5ch; }
+.endpoints p { margin: 0; font-size: 0.95rem; color: var(--ink-soft); }
+
+/* What it is not: four placards on the yellow band */
+.guards-bay { background: var(--line); color: var(--line-ink); }
+.guards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 16px; }
+.guards > div { background: var(--placard); border: var(--rule); padding: 16px 18px; }
+.guards h3 { font: 800 1.35rem/1.05 var(--display); text-transform: uppercase; margin: 0 0 8px; letter-spacing: 0.02em; }
+.guards p { margin: 0; font-size: 0.97rem; }
+
+pre {
+  background: var(--code-bg);
+  color: var(--code-ink);
+  font: 400 0.9rem/1.55 var(--mono);
+  padding: 16px;
+  border: var(--rule);
+  overflow-x: auto;
+  margin: 0 0 16px;
+}
+
+footer { background: var(--ink); color: var(--placard); padding: 36px 0 44px; font-size: 0.95rem; }
+footer .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 24px; }
+footer h3 { font: 800 1rem/1 var(--display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--line); margin: 0 0 10px; }
+footer ul { list-style: none; padding: 0; margin: 0; }
+footer li { margin: 0 0 6px; }
+footer p { margin: 0 0 8px; max-width: 60ch; }
+
+/* Terms page */
+.doc { background: var(--placard); border: var(--rule); padding: clamp(20px, 4vw, 44px); max-width: 860px; margin: clamp(28px, 5vw, 56px) 0; }
+.doc h1 { font: 800 clamp(2.4rem, 6vw, 3.6rem)/0.95 var(--display); text-transform: uppercase; margin: 0 0 18px; }
+.doc h2 { font: 800 1.5rem/1.1 var(--display); text-transform: uppercase; margin: 32px 0 8px; letter-spacing: 0.02em; }
+.doc p, .doc li { max-width: 68ch; }
+.back { display: inline-block; margin-top: 22px; font: 800 1rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; }
+
+@media (max-width: 860px) {
+  .mast-grid { grid-template-columns: minmax(0, 1fr); }
+  table.ads .hide-narrow { display: none; }
+  .dates-narrow { display: block; }
+  .call { display: none; }
+}
+@media (max-width: 520px) {
+  .query .row { flex-direction: column; }
+  .query input { border-right: var(--rule); border-bottom: 0; }
+  table.ads td, table.ads th { padding: 9px 8px; }
+  table.ads td.official { white-space: normal; }
+}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block main %}
+<main>
+<header class="mast">
+  <div class="wrap mast-grid">
+    <div>
+      <h1 class="title">{{ title }} <span>Airworthiness directives as JSON and Atom</span></h1>
+      <p class="hook">A free JSON API and per-type Atom feeds over the AD list that EASA publishes. You need no key and no account. In November 2026 EASA's own Safety Publications Tool was offline.</p>
+      <div class="streamer" role="note">
+        <p>Not a compliance source <small>Always confirm against the official EASA publication.</small></p>
+      </div>
+      <form class="query" action="/" method="get">
+        <label for="type">Look up a type</label>
+        <div class="row">
+          <input id="type" name="type" value="{{ example_type }}" autocomplete="off" spellcheck="false" aria-describedby="type-hint">
+          <button type="submit">List ADs</button>
+        </div>
+        <p class="hint" id="type-hint">A type or model as EASA lists it, for example A350, TBM 700, AW189 or 737. The result below comes from this server's copy of the list.</p>
+      </form>
+    </div>
+    <div class="side">
+    <aside class="placard{% if status.stale %} is-stale{% endif %}" aria-labelledby="sync-h">
+      <h2 id="sync-h"><span>Last sync</span> <span class="lamp">{% if status.stale %}Stale{% else %}Current{% endif %}</span></h2>
+      <dl>
+        <dt>Interim page</dt>
+        <dd>{{ status.sources.interim.last_successful_sync | when }}</dd>
+        <dt>AD archive</dt>
+        <dd>{{ status.sources.archive.last_successful_sync | when }}</dd>
+        <dt>Two-weekly CSV</dt>
+        <dd>{{ status.sources.csv.last_successful_sync | when }}</dd>
+        <dt>PDF headers</dt>
+        <dd>{{ status.sources.pdfs.last_successful_sync | when }}</dd>
+      </dl>
+      <p>The data counts as stale when no interim sync succeeds for {{ stale_hours | round(1) | replace(".0", "") }} hours. This server holds {{ "{:,}".format(counts.publications) }} publications. <a href="/v1/status">Full status</a></p>
+    </aside>
+      <div class="call">
+        <p class="call-label">Call it</p>
+        <div class="req"><span class="verb">GET</span><a href="{{ example_url }}">{{ example_url }}</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="floorline" aria-hidden="true"></div>
+
+<section class="bay" aria-labelledby="example-h">
+  <div class="wrap">
+    <h2 id="example-h">ADs listed for {{ example_type }}</h2>
+    <p class="lede">{{ "{:,}".format(example_total) }} publications in EASA's list match this type or model. The newest {{ example | length }} are below, and each row links to the official EASA document.</p>
+    <div class="req"><span class="verb">GET</span><a href="{{ example_url }}">{{ example_url }}</a></div>
+    {% if example %}
+    <table class="ads" aria-labelledby="example-h">
+      <thead>
+        <tr><th scope="col">Number</th><th scope="col">Subject</th><th scope="col" class="hide-narrow">Issued</th><th scope="col" class="hide-narrow">Effective</th><th scope="col">Official</th></tr>
+      </thead>
+      <tbody>
+      {% for ad in example %}
+        <tr>
+          <td class="num"><a href="/v1/ads/{{ ad.number | urlencode }}">{{ ad.number }}</a>{% if ad.emergency %}<span class="badge emergency">Emergency</span>{% elif ad.class != "AD" %}<span class="badge">{{ ad.class }}</span>{% endif %}</td>
+          <td>{{ ad.subject }}<br><span class="status {{ ad.status }}">{{ ad.status | replace("_", " ") }}</span><span class="dates-narrow">Issued {{ ad.issue_date or "not listed" }}, effective {{ ad.effective_date or "not listed" }}</span></td>
+          <td class="date hide-narrow">{{ ad.issue_date or "not listed" }}</td>
+          <td class="date hide-narrow">{{ ad.effective_date or "not listed" }}</td>
+          <td class="official">{% if ad.official_documents %}<a href="{{ ad.official_documents[0].url }}">{{ ad.official_documents[0].label }}</a>{% else %}<a href="{{ ad.official_source_page }}">EASA list</a>{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No publication lists "{{ example_type }}" as a type or model. Try a shorter designation, or add <code>match=contains</code> to the API call.</p>
+    {% endif %}
+    <p class="more">Subscribe to this type in a feed reader: <a href="{{ feed_url }}">{{ feed_url }}</a></p>
+  </div>
+</section>
+
+<section class="bay guards-bay" aria-labelledby="guards-h">
+  <div class="wrap">
+    <h2 id="guards-h">What this is not</h2>
+    <div class="guards">
+      <div><h3>Not EASA</h3><p>An unofficial mirror of data that EASA publishes. Not affiliated with or endorsed by EASA.</p></div>
+      <div><h3>Not for compliance</h3><p>The service does not judge whether an AD applies, and it does not match serial or part numbers. Always confirm against the official EASA publication.</p></div>
+      <div><h3>Not always current</h3><p>This server reads the interim page every 30 minutes. Each JSON response gives the last interim sync time and sets a stale flag when no interim sync has succeeded for {{ stale_hours | round(1) | replace(".0", "") }} hours.</p></div>
+      <div><h3>Not a copy of the PDFs</h3><p>Every record links to the EASA page that lists it, and to EASA's own document where EASA lists one. From each PDF header the server publishes only the dates, the supersedure and revision references, the foreign AD reference and the start of the applicability text (at most 300 characters).</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="bay" aria-labelledby="endpoints-h">
+  <div class="wrap">
+    <h2 id="endpoints-h">Endpoints</h2>
+    <p class="lede">Every JSON response carries a <code>meta</code> block with the notice, the last interim sync time and the stale flag. Atom feeds carry the notice and the stale warning. The <a href="/docs">OpenAPI documentation</a> lists every parameter.</p>
+    <div class="endpoints">
+      <div><code><b>GET</b>/v1/ads/{number}</code><p>One publication with types, links to the official documents, supersedure chain and status.</p></div>
+      <div><code><b>GET</b>/v1/ads<wbr>?type=<wbr>&amp;holder=<wbr>&amp;class=<wbr>&amp;issuer=<wbr>&amp;status=</code><p>Search by these parameters, or by subject text and issue or effective date.</p></div>
+      <div><code><b>GET</b>/v1/types</code><p>Type designations with the number of publications for each.</p></div>
+      <div><code><b>GET</b>/v1/types/{type}/ads</code><p>All publications listed for one type or model.</p></div>
+      <div><code><b>GET</b>/v1/changes<wbr>?since=<wbr>&amp;after_id=</code><p>New publications, status changes and new documents, paged by id.</p></div>
+      <div><code><b>GET</b>/v1/changes.atom<wbr>?type=<wbr>&amp;holder=<wbr>&amp;class=<wbr>&amp;issuer=</code><p>The same changes as an Atom feed. Emergency ADs carry an emergency category and title.</p></div>
+      <div><code><b>GET</b>/v1/status</code><p>Last successful sync per source, the stale flag, counts and the CSV reconciliation result.</p></div>
+      <div><code><b>GET</b>/docs</code><p>OpenAPI documentation with every parameter.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="bay" aria-labelledby="match-h">
+  <div class="wrap">
+    <h2 id="match-h">How type matching works</h2>
+    <p class="lede">A type query matches the type and model names exactly as EASA lists them, without regard to case. The interim page gives a clean list per holder. The archive gives one line of names joined by "/", and some model names contain "/", so the split of archive rows is a guess and is marked <code>parse_confidence: low</code>. Use <code>match=contains</code> to search the type text as EASA published it.</p>
+<pre>curl '{{ example_url }}?status=active'
+curl '{{ base }}/v1/ads?type=CFM56-7B&amp;match=contains&amp;class=EAD'</pre>
+    <p class="lede">The status "active" means only that EASA's published data shows no supersedure, cancellation, withdrawal or revision for the AD. Whether it applies to an aircraft, or is in force, comes from the official EASA document.</p>
+  </div>
+</section>
+</main>
+{% endblock %}

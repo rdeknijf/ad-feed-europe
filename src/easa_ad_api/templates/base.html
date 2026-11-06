@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ title }}{% endblock %} (unofficial)</title>
+<meta name="description" content="{{ notice }} {{ disclaimer }}">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/site.css">
+<link rel="alternate" type="application/atom+xml" title="{{ title }}: all AD changes" href="/v1/changes.atom">
+</head>
+<body>
+<div class="mirror-strip" role="note">
+  <div class="wrap"><strong>Notice</strong> {{ notice }} {{ disclaimer }}</div>
+</div>
+{% if status.stale %}
+<div class="stale" role="alert">
+  <div class="wrap"><div><b>Stale data</b> {% if status.as_of %}The last successful sync of the EASA interim page was at {{ status.as_of | when }}, more than {{ stale_hours | round(1) | replace(".0", "") }} hours ago.{% else %}This server has no successful sync of the EASA interim page yet.{% endif %} Newer ADs may be missing.</div></div>
+</div>
+{% endif %}
+{% block main %}{% endblock %}
+<footer>
+  <div class="wrap cols">
+    <div>
+      <h3>{{ title }}</h3>
+      <p>{{ notice }}</p>
+      <p>{{ disclaimer }}</p>
+    </div>
+    <div>
+      <h3>Official EASA sources</h3>
+      <ul>
+        <li><a href="{{ interim_url }}">Safety Publications interim page</a></li>
+        <li><a href="{{ archive_url }}">AD archive (until 27 October 2026)</a></li>
+        <li><a href="{{ tool_url }}">Safety Publications Tool</a></li>
+        <li><a href="{{ interim_url }}#group-get-notified">EASA email alerts (free)</a></li>
+        <li><a href="{{ faq_url }}">EASA FAQ on the tool</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>This service</h3>
+      <ul>
+        <li><a href="/terms">Terms and no-warranty notice</a></li>
+        <li><a href="/docs">OpenAPI documentation</a></li>
+        <li><a href="/v1/status">Sync status (JSON)</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

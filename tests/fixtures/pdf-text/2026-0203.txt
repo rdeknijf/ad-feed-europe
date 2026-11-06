@@ -1,0 +1,17 @@
+                                                                                                                              EASA AD No.: 2026-0203
+
+                                                                  Airworthiness Directive
+                                                                  AD No.:              2026-0203
+                                                                  Issued:              27 October 2026
+
+         Design Approval Holder’s Name:                                                    Type/Model designation(s):
+         ROLLS-ROYCE DEUTSCHLAND Ltd & Co KG                                               Trent 1000 engines
+
+         Effective Date:                 10 November 2026
+         Foreign AD:                     None
+         Supersedure:                    This AD supersedes EASA AD 2025-0206R1 dated 18 December 2025.
+
+         Applicability:
+         Trent 1000-AE3, Trent 1000-CE3, Trent 1000-D3, Trent 1000-G3, Trent 1000-H3, Trent 1000-J3,
+         Trent 1000-K3, Trent 1000-L3, Trent 1000-M3, Trent 1000-N3, Trent 1000-P3, Trent 1000-Q3 and
+         Trent 1000-R3 engines, engine serial number (ESN) prior to ESN 11603.
