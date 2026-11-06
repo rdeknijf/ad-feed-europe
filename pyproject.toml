@@ -2,6 +2,8 @@
 name = "easa-ad-api"
 version = "0.1.0"
 description = "Unofficial, free JSON API and Atom feeds over the airworthiness directive list that EASA publishes"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "Rutger de Knijf", email = "rutger@deknijf.com" }
 ]

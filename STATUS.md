@@ -22,7 +22,7 @@ A free, unofficial public API and Atom feeds over the EASA airworthiness directi
 - Checks pass: `uv run prek run --all-files`, `uv run pytest` (141 tests, 95% coverage), `uv audit --locked`. The same steps pass in a fresh clone without LFS content, which is what `.github/workflows/ci.yml` runs.
 - Test fixtures hold no full EASA documents: the PDF text fixtures are first-page header excerpts (129 KB to 11 KB), the interim fixture holds only its two tables (355 KB to 73 KB). The parsers give identical output on the old and the new fixtures.
 - History scan (no gitleaks or trufflehog installed, grep of `git log -p --all`): no credentials. Older commits still hold the full PDF text and interim page fixtures, with third-party support email addresses and EASA page tokens. A squash to one fresh root commit removes them.
-- No LICENSE file yet.
+- Code licence: MIT (Rutger, 2026-11-06).
 
 ## Decisions
 

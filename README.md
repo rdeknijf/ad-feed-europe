@@ -109,3 +109,7 @@ Each `ingest-*` command also takes `--from-file` to load a saved copy of a page 
 `docker-compose.yml` is the live setup (Traefik labels and an external `proxy` network). Adapt it for a local container run.
 
 Stack: Python 3.14, FastAPI, httpx, lxml, Jinja2, SQLite, click, uv, ruff, ty, pytest.
+
+## Licence
+
+The code is under the [MIT licence](LICENSE). EASA's content stays under EASA's [copyright notice](https://www.easa.europa.eu/en/copyright-disclaimer).
