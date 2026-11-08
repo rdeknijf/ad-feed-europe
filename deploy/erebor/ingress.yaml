@@ -1,0 +1,37 @@
+# Public front door on erebor. DNS-01 through Cloudflare, so the certificate is
+# issued before DNS points here. Until the DNS switch, this Ingress answers only
+# a request that forces the erebor address (curl --resolve).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: adfeed
+  namespace: adfeed
+  labels:
+    app: adfeed
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare-dns01
+    # 10 requests per second with a burst of 40 per client, keyed on the
+    # CF-Connecting-IP header. The controller sees only the load balancer address,
+    # so the built-in limit-rps annotation would put all clients in one bucket.
+    # Zone `adfeed` comes from http-snippet in square's
+    # clusters/erebor/ingress-nginx/configmap.yaml.
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      limit_req zone=adfeed burst=40 nodelay;
+      limit_req_status 429;
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - adfeed.deknijf.com
+      secretName: adfeed-tls
+  rules:
+    - host: adfeed.deknijf.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: adfeed
+                port:
+                  number: 8000
