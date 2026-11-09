@@ -6,9 +6,7 @@ metadata:
   labels:
     app: adfeed
 spec:
-  # 0 until the data is restored on the PVC. Setting this to 1 is the go-live
-  # commit, and it also starts the worker that polls EASA.
-  replicas: 0
+  replicas: 1
   # The volume is ReadWriteOnce, so the old pod must stop before a new pod starts.
   strategy:
     type: Recreate
