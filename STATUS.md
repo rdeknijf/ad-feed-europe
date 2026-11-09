@@ -10,12 +10,12 @@ A free, unofficial public API and Atom feeds over the EASA airworthiness directi
 
 ## Live
 
-- Public as "AD Feed Europe" at https://adfeed.deknijf.com since 2026-11-06. Docker compose runs `api` and `worker` on the host `buckland`, behind Traefik and Cloudflare. The Traefik rate limit is 10 requests per second on average, burst 40, per `CF-Connecting-IP` (60 parallel requests gave 46 x 200 and 14 x 429).
+- Public as "AD Feed Europe" at https://adfeed.deknijf.com since 2026-11-06. Since 2026-11-09 it runs on the erebor cluster (namespace `adfeed`, 2 GiB volume, manifests in `deploy/erebor/`), behind ingress-nginx and Cloudflare. The ingress rate limit is 10 requests per second, burst 40, per `CF-Connecting-IP` (a burst of 120 gave 44 x 200 and 76 x 429). The old Compose stack in `~/services/adfeed` on `buckland` is stopped, its files stay, and it is out of the host's `update.sh`.
 - Verified 2026-11-06 11:05 UTC: `/v1/status` shows a successful interim sync at 11:05:46 (71 rows), so the worker runs. 17,482 publications.
-- An uptime probe on the host alerts when `/` fails twice. It does not see the stale flag: a dead worker shows only as the stale banner. The host backup covers the live database (`~/services/adfeed/data/easa_ads.db`), and the host's `~/services/update.sh` rebuilds this stack with the others.
+- An uptime probe on the host alerts when `/` fails twice. It does not see the stale flag: a dead worker shows only as the stale banner. No backup job exists for the volume on erebor yet (bead sq-wnlp in rdeknijf/square). The last copy is `~/backups/erebor-move-2026-11-09/adfeed/` on buckland.
 - Public wording was fact-checked on 2026-11-06 by two independent models; five overclaims were fixed and redeployed (`da8f942`).
 - Redeployed 2026-11-06 about 12:10 UTC: the worker sends the User-Agent `ADFeedEurope/1.0 (+https://adfeed.deknijf.com/terms)` (`USER_AGENT` in `src/easa_ad_api/config.py`), and `/terms` has the "Corrections and removal" section.
-- Deploy a new version: `git ls-files | rsync -a --files-from=- ./ buckland:services/adfeed/` from a checkout with the LFS fonts present, then `ssh buckland 'cd ~/services/adfeed && docker compose up -d --build'`.
+- Deploy a new version: set the new image SHA in `deploy/erebor/deployment.yaml` and merge to `main`. Flux on erebor rolls it out.
 
 ## Repo state (2026-11-06)
 
