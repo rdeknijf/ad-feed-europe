@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adfeed
+  namespace: adfeed
+  labels:
+    app: adfeed
+spec:
+  # 0 until the data is restored on the PVC. Setting this to 1 is the go-live
+  # commit, and it also starts the worker that polls EASA.
+  replicas: 0
+  # The volume is ReadWriteOnce, so the old pod must stop before a new pod starts.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: adfeed
+  template:
+    metadata:
+      labels:
+        app: adfeed
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        # A fresh block volume is owned by root; the app runs as uid 1000.
+        fsGroup: 1000
+      containers:
+        - name: api
+          image: ghcr.io/rdeknijf/ad-feed-europe:2890cbb7372c2664fb2854ea944b0918f1a28a27
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: EASA_AD_DATA_DIR
+              value: /data
+            - name: EASA_AD_STALE_HOURS
+              value: "6"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /v1/status
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /v1/status
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 25m
+              memory: 96Mi
+            limits:
+              memory: 256Mi
+        # Polls EASA: interim page every 30 minutes, archive weekly, each new
+        # biweekly CSV once. It writes to the same SQLite file as the api.
+        - name: worker
+          image: ghcr.io/rdeknijf/ad-feed-europe:2890cbb7372c2664fb2854ea944b0918f1a28a27
+          imagePullPolicy: IfNotPresent
+          command: [".venv/bin/easa-ad-api", "worker"]
+          env:
+            - name: EASA_AD_DATA_DIR
+              value: /data
+            - name: EASA_AD_REQUEST_DELAY
+              value: "2.5"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 25m
+              memory: 96Mi
+            limits:
+              # The weekly archive parse holds the whole page in memory.
+              memory: 512Mi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: adfeed-data
